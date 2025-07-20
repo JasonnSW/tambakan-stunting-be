@@ -4,8 +4,6 @@ WORKDIR /app
 
 COPY ./app /app
 
-COPY .env /app/.env
-
 RUN pip install -r requirements.txt
 
 RUN chmod 600 /app/.env
