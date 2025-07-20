@@ -6,4 +6,3 @@ COPY ./app /app
 
 RUN pip install -r requirements.txt
 
-RUN chmod 600 /app/.env
