@@ -1,0 +1,73 @@
+from pydantic import BaseModel, validator
+from datetime import datetime
+from typing import Optional, List
+from enum import Enum
+from decimal import Decimal
+
+class StatusStunting(str, Enum):
+    NORMAL = "NORMAL"
+    STUNTING = "STUNTING"
+
+
+class PemeriksaanBase(BaseModel):
+    balita_id: int
+    tanggal_pemeriksaan: datetime
+    usia_bulan: int
+    tinggi_badan: Decimal
+    berat_badan: Decimal
+
+class PemeriksaanCreate(PemeriksaanBase):
+    @validator('usia_bulan')
+    def validate_usia_bulan(cls, v):
+        if v < 0 or v > 60:  # 0-5 tahun
+            raise ValueError('Usia bulan harus antara 0-60 bulan')
+        return v
+    
+    @validator('tinggi_badan')
+    def validate_tinggi_badan(cls, v):
+        if v < 30 or v > 150:  # cm
+            raise ValueError('Tinggi badan harus antara 30-150 cm')
+        return v
+    
+    @validator('berat_badan')
+    def validate_berat_badan(cls, v):
+        if v < 1 or v > 50:  # kg
+            raise ValueError('Berat badan harus antara 1-50 kg')
+        return v
+
+class PemeriksaanUpdate(BaseModel):
+    tanggal_pemeriksaan: Optional[datetime] = None
+    usia_bulan: Optional[int] = None
+    tinggi_badan: Optional[Decimal] = None
+    berat_badan: Optional[Decimal] = None
+    status_stunting: Optional[StatusStunting] = None
+
+    @validator('usia_bulan')
+    def validate_usia_bulan(cls, v):
+        if v is not None and (v < 0 or v > 60):
+            raise ValueError('Usia bulan harus antara 0-60 bulan')
+        return v
+    
+    @validator('tinggi_badan')
+    def validate_tinggi_badan(cls, v):
+        if v is not None and (v < 30 or v > 150):
+            raise ValueError('Tinggi badan harus antara 30-150 cm')
+        return v
+    
+    @validator('berat_badan')
+    def validate_berat_badan(cls, v):
+        if v is not None and (v < 1 or v > 50):
+            raise ValueError('Berat badan harus antara 1-50 kg')
+        return v
+
+class PemeriksaanResponse(PemeriksaanBase):
+    id: int
+    status_stunting: StatusStunting
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+    
+    class Config:
+        from_attributes = True
+
+class PemeriksaanWithBalita(PemeriksaanResponse):
+    balita: Optional["BalitaResponse"] = None
