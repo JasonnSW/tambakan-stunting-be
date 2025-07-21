@@ -5,16 +5,15 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: tiangolo/uvicorn-gunicorn-fastapi:python3.11
     ports:
-      - "8000:80"
+      - "8000:8000"
     volumes:
       - ./app:/app
       - ./.env:/app/.env
     environment:
       - MODULE_NAME=main
       - VARIABLE_NAME=app
-      - PORT=80
+      - PORT=8000
     depends_on:
       - db
 
