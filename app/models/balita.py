@@ -13,6 +13,8 @@ class Balita(Base):
     posyandu_id = Column(Integer, ForeignKey("posyandu.id"))
     tanggal_lahir = Column(DateTime)
     jenis_kelamin = Column(String(1))
+    rt = Column(String, nullable=True)
+    rw = Column(String, nullable=True)
     created_at = Column(DateTime)
     updated_at = Column(DateTime)
     

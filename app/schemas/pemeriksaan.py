@@ -8,13 +8,23 @@ class StatusStunting(str, Enum):
     NORMAL = "NORMAL"
     STUNTING = "STUNTING"
 
-
 class PemeriksaanBase(BaseModel):
     balita_id: int
     tanggal_pemeriksaan: datetime
     usia_bulan: int
     tinggi_badan: Decimal
     berat_badan: Decimal
+
+class StatusTerkini(BaseModel):
+    status_stunting: StatusStunting
+    tinggi_badan: float
+    berat_badan: float
+
+class RiwayatPemeriksaan(BaseModel):
+    tanggal: datetime
+    tinggi_badan: float
+    berat_badan: float
+    posyandu: str
 
 class PemeriksaanCreate(PemeriksaanBase):
     @validator('usia_bulan')

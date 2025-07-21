@@ -2,6 +2,8 @@ from pydantic import BaseModel, validator
 from datetime import datetime
 from typing import Optional, List
 from enum import Enum
+from schemas.posyandu import PosyanduResponse
+from schemas.pemeriksaan import StatusStunting, RiwayatPemeriksaan, StatusTerkini
 
 class JenisKelamin(str, Enum):
     LAKI_LAKI = "L"
@@ -14,6 +16,8 @@ class BalitaBase(BaseModel):
     posyandu_id: int
     tanggal_lahir: datetime
     jenis_kelamin: JenisKelamin
+    rt: Optional[str]
+    rw: Optional[str]
 
 class BalitaCreate(BalitaBase):
     @validator('nik')
@@ -49,8 +53,29 @@ class BalitaResponse(BalitaBase):
     class Config:
         from_attributes = True
 
-class BalitaWithPosyandu(BalitaResponse):
-    posyandu: Optional["PosyanduResponse"] = None
+class BalitaSearchResponse(BaseModel):
+    id: int
+    nama: str
+    nik: str
+    nama_orang_tua: str
+    tanggal_lahir: datetime
+    jenis_kelamin: str
+    status_terkini: Optional[StatusTerkini]
+    riwayat_pemeriksaan: List[RiwayatPemeriksaan]
+
+class BalitaWithPosyandu(BaseModel):
+    id: int
+    nama: str
+    nik: str
+    nama_orang_tua: str
+    tanggal_lahir: datetime
+    jenis_kelamin: JenisKelamin
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+    posyandu: Optional[PosyanduResponse] = None
+
+    class Config:
+        from_attributes = True
 
 class BalitaWithPemeriksaan(BalitaResponse):
     pemeriksaan: List["PemeriksaanResponse"] = []
