@@ -3,6 +3,7 @@ FROM python:3.11-slim
 WORKDIR /app
 
 COPY ./app/requirements.txt /app/requirements.txt
+RUN pip install six==1.16.0
 RUN pip install --no-cache-dir -r /app/requirements.txt
 
 COPY ./app /app

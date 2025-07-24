@@ -8,4 +8,6 @@ SQLAlchemy
 psycopg2-binary    
 alembic
 python-jose
-pydantic-settings
+growth
+python-dateutil
+pygrowup

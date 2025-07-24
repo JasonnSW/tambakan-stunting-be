@@ -3,11 +3,11 @@ from datetime import datetime
 from typing import Optional, List
 from enum import Enum
 from schemas.posyandu import PosyanduResponse
-from schemas.pemeriksaan import StatusStunting, RiwayatPemeriksaan, StatusTerkini
+from schemas.pemeriksaan import StatusStunting, RiwayatPemeriksaan, StatusTerkini, PemeriksaanBase
 
 class JenisKelamin(str, Enum):
-    LAKI_LAKI = "L"
-    PEREMPUAN = "P"
+    LAKI_LAKI = "M"
+    PEREMPUAN = "F"
 
 class BalitaBase(BaseModel):
     nama: str
@@ -19,7 +19,19 @@ class BalitaBase(BaseModel):
     rt: Optional[str]
     rw: Optional[str]
 
-class BalitaCreate(BalitaBase):
+class StuntingResult(BaseModel):
+    zscore_tbu: Optional[float] = None
+    kategori_tbu: Optional[str] = None
+    zscore_bbtb: Optional[float] = None
+    kategori_bbtb: Optional[str] = None
+    status_stunting: Optional[str] = None
+    rekomendasi: Optional[str] = None
+
+class BalitaCreateWithPemeriksaan(BalitaBase):
+    tinggi_badan: float
+    berat_badan: float
+
+class BalitaCreate(BalitaCreateWithPemeriksaan):
     @validator('nik')
     def validate_nik(cls, v):
         if len(v) != 16:
@@ -49,9 +61,13 @@ class BalitaResponse(BalitaBase):
     id: int
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
+    posyandu: Optional[PosyanduResponse] = None
     
     class Config:
         from_attributes = True
+
+class BalitaResponseWithStatus(BalitaResponse):
+    status: StuntingResult
 
 class BalitaSearchResponse(BaseModel):
     id: int

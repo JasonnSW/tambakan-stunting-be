@@ -16,8 +16,8 @@ class BalitaService:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Data balita tidak ditemukan")
         return db_balita
 
-    def get_all_balita(self, skip: int, limit: int):
-        return self.repo.get_all(skip, limit)
+    def get_all_balita(self, skip: int):
+        return self.repo.get_all(skip)
 
     def create_balita(self, balita: BalitaCreate):
         existing_balita = self.repo.get_by_nik(balita.nik)

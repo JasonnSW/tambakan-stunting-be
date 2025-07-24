@@ -2,6 +2,7 @@ from pydantic import BaseModel
 from typing import List, Dict, Any
 from datetime import datetime
 from schemas.pemeriksaan import PemeriksaanResponse
+from schemas.balita import BalitaBase
 
 class DashboardStats(BaseModel):
     total_balita: int

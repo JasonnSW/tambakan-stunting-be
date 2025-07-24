@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from core.config import get_settings
-from api import balita_router, posyandu_router, pemeriksaan_router, auth_router
+from api import balita_router, posyandu_router, pemeriksaan_router, auth_router, dashboard_router
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(
@@ -20,6 +20,7 @@ app.include_router(balita_router.router)
 app.include_router(posyandu_router.router)
 app.include_router(pemeriksaan_router.router)
 app.include_router(auth_router.router)
+app.include_router(dashboard_router.router)
 
 @app.get("/")
 def root():

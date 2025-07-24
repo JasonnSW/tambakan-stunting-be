@@ -11,12 +11,35 @@ class StatusStunting(str, Enum):
 class PemeriksaanBase(BaseModel):
     balita_id: int
     tanggal_pemeriksaan: datetime
-    usia_bulan: int
+    usia_bulan: Optional[int] = None 
     tinggi_badan: Decimal
     berat_badan: Decimal
 
+class PemeriksaanSimpleCreate(PemeriksaanBase):
+    status_stunting: Optional[str] = None
+
+class PosyanduMini(BaseModel):
+    nama_posyandu: str
+    alamat: str
+
+    class Config:
+        from_attributes = True
+
+class BalitaMini(BaseModel):
+    nama: str
+    nik: str
+    nama_orang_tua: str
+    posyandu: Optional[PosyanduMini] = None
+
+    class Config:
+        from_attributes = True
+
+class AnalisisResult(BaseModel):
+    status_stunting: str
+    z_score: float
+
 class StatusTerkini(BaseModel):
-    status_stunting: StatusStunting
+    status_stunting: Optional[StatusStunting] = None
     tinggi_badan: float
     berat_badan: float
 
@@ -72,9 +95,10 @@ class PemeriksaanUpdate(BaseModel):
 
 class PemeriksaanResponse(PemeriksaanBase):
     id: int
-    status_stunting: StatusStunting
+    status_stunting: Optional[StatusStunting] = None 
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
+    balita: Optional[BalitaMini] = None
     
     class Config:
         from_attributes = True
