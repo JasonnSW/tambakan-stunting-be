@@ -17,7 +17,7 @@ def get_dashboard_data(db: Session) -> DashboardResponse:
     trend_data_raw = repo.get_trend_data()
     trend_data = [
         TrendData(
-            bulan=td.bulan.strip(),
+            bulan = td.bulan.strip() if td.bulan else "",
             total_pemeriksaan=td.total_pemeriksaan,
             kasus_stunting=td.kasus_stunting,
             status_normal=td.status_normal,

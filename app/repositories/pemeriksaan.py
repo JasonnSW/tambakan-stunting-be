@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import extract
 from models.pemeriksaan import Pemeriksaan as PemeriksaanModel
 from models.balita import Balita as BalitaModel
 from typing import List, Optional
@@ -50,7 +51,6 @@ class PemeriksaanRepository:
             tanggal_pemeriksaan=datetime.now(),
             tinggi_badan=data.tinggi_badan,
             berat_badan=data.berat_badan,
-            # status_stunting=your_logic(data.berat_badan, data.tinggi_badan)  # jika ada
         )
 
         self.db.add(new_pemeriksaan)
@@ -69,15 +69,33 @@ class PemeriksaanRepository:
         self.db.refresh(db_data)
         return db_data
 
-    def delete(self, id: int):
-        db_data = self.get_by_id(id)
-        if not db_data:
+    def delete(self, pemeriksaan: PemeriksaanModel):
+        self.db.delete(pemeriksaan)
+        self.db.commit()
+    
+    def delete_by_nik_and_month_year(self, nik: str, bulan: int, tahun: int):
+        pemeriksaans = (
+            self.db.query(PemeriksaanModel)
+            .join(BalitaModel, PemeriksaanModel.balita_id == BalitaModel.id)
+            .filter(
+                BalitaModel.nik == nik,
+                extract("month", PemeriksaanModel.tanggal_pemeriksaan) == bulan,
+                extract("year", PemeriksaanModel.tanggal_pemeriksaan) == tahun
+            )
+            .all()
+        )
+
+        if not pemeriksaans:
             return None
 
-        balita = self.db.query(BalitaModel).filter(BalitaModel.id == db_data.balita_id).first()
-        if balita and balita.total_pemeriksaan:
-            balita.total_pemeriksaan = max(0, balita.total_pemeriksaan - 1)
+        for pemeriksaan in pemeriksaans:
+            self.db.delete(pemeriksaan)
 
-        self.db.delete(db_data)
         self.db.commit()
-        return db_data
+        return pemeriksaans
+
+    def save_pemeriksaan(self, balita: BalitaModel, pemeriksaan: PemeriksaanModel):
+        balita.pemeriksaan.append(pemeriksaan)
+        self.db.add(balita)
+        self.db.commit()
+        self.db.refresh(balita)

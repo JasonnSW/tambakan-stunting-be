@@ -10,7 +10,7 @@ class StatusStunting(str, Enum):
 
 class PemeriksaanBase(BaseModel):
     balita_id: int
-    tanggal_pemeriksaan: datetime
+    tanggal_pemeriksaan: Optional[datetime] = None
     usia_bulan: Optional[int] = None 
     tinggi_badan: Decimal
     berat_badan: Decimal
@@ -43,11 +43,22 @@ class StatusTerkini(BaseModel):
     tinggi_badan: float
     berat_badan: float
 
+class PemeriksaanInput(BaseModel):
+    nik: str
+    tanggal_lahir: datetime
+    posyandu_id: int
+    tanggal_pemeriksaan: datetime
+    jenis_kelamin: str 
+    tinggi_badan: float
+    berat_badan: float
+    
 class RiwayatPemeriksaan(BaseModel):
     tanggal: datetime
     tinggi_badan: float
     berat_badan: float
     posyandu: str
+    z_score_tb_u: Optional[float]
+    z_score_bb_tb: Optional[float]
 
 class PemeriksaanCreate(PemeriksaanBase):
     @validator('usia_bulan')
@@ -95,13 +106,53 @@ class PemeriksaanUpdate(BaseModel):
 
 class PemeriksaanResponse(PemeriksaanBase):
     id: int
+    balita_id: Optional[int] = None
     status_stunting: Optional[StatusStunting] = None 
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
     balita: Optional[BalitaMini] = None
-    
+    tinggi_badan: Optional[Decimal] = None
+    berat_badan: Optional[Decimal] = None
+
     class Config:
         from_attributes = True
+
+class PemeriksaanStatus(BaseModel):
+    zscore_tbu: float
+    kategori_tbu: str
+    zscore_bbtb: float
+    kategori_bbtb: str
+    status_stunting: StatusStunting
+    rekomendasi: str
+
+class PemeriksaanBalitaResponse(BaseModel):
+    id: int
+    nama: str
+    nik: str
+    nama_orang_tua: str
+    tanggal_lahir: datetime
+    jenis_kelamin: str
+    posyandu_id: int
+    rt: str
+    rw: str
+    status: PemeriksaanStatus
+
+    class Config:
+        from_attributes = True
+
+class StatusStuntingInfo(BaseModel):
+    status: StatusStunting
+    zscore_tbu: float
+    kategori_tbu: str
+    zscore_bbtb: float
+    kategori_bbtb: str
+    rekomendasi: str
+
+class PemeriksaanOutput(BaseModel):
+    tanggal_pemeriksaan: datetime
+    tinggi_badan: float
+    berat_badan: float
+    status_stunting: Optional[StatusStuntingInfo] = None 
 
 class PemeriksaanWithBalita(PemeriksaanResponse):
     balita: Optional["BalitaResponse"] = None

@@ -81,6 +81,7 @@ class BalitaRepository:
             "jenis_kelamin": db_balita.jenis_kelamin,
             "rt": db_balita.rt,
             "rw": db_balita.rw,
+            "posyandu" : db_balita.posyandu,
             "created_at": db_balita.created_at,
             "updated_at": db_balita.updated_at,
             "status": status 

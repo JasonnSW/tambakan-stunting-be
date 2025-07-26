@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 from core.database import get_db
 from services.pemeriksaan import PemeriksaanService
-from schemas.pemeriksaan import PemeriksaanCreate, PemeriksaanUpdate, PemeriksaanResponse, PemeriksaanSimpleCreate
+from schemas.pemeriksaan import PemeriksaanCreate, PemeriksaanUpdate, PemeriksaanResponse, PemeriksaanSimpleCreate, PemeriksaanInput, PemeriksaanBalitaResponse
 from typing import List
 
 router = APIRouter(
@@ -38,5 +38,15 @@ def update(id: int, data: PemeriksaanUpdate, db: Session = Depends(get_db)):
 
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete(id: int, db: Session = Depends(get_db)):
-    PemeriksaanService(db).delete_pemeriksaan(id)
+    PemeriksaanService(db).delete(id)
     return {"message": "Pemeriksaan berhasil dihapus"}
+
+@router.delete("/nik/", status_code=status.HTTP_204_NO_CONTENT)
+def delete_by_nik(nik: str, bulan: int, tahun: int, db: Session = Depends(get_db)):
+    PemeriksaanService(db).delete_by_nik_and_month_year(nik, bulan, tahun)
+    return {"message": "Pemeriksaan berhasil dihapus"}
+
+@router.post("/tambah", response_model=PemeriksaanBalitaResponse)
+def tambah_pemeriksaan(data: PemeriksaanInput, db: Session = Depends(get_db)):
+    service = PemeriksaanService(db)
+    return service.tambah_pemeriksaan(data)

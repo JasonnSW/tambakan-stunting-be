@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from schemas.balita import BalitaCreate, BalitaUpdate, BalitaResponse, BalitaWithPosyandu, BalitaSearchResponse,BalitaResponseWithStatus
 from services.balita import BalitaService
 from core.database import get_db
+from typing import List, Optional
 
 router = APIRouter(
     prefix="/balita",
@@ -19,9 +20,9 @@ def create_balita_endpoint(
     return service.create_balita(balita_data)
 
 @router.get("/search", response_model=List[BalitaSearchResponse])
-def search_balita(db: Session = Depends(get_db)):
-    service = BalitaService(db)
-    return service.search_balita()
+def search_balita(nik: Optional[str] = None, nama: Optional[str] = None, db: Session = Depends(get_db)):
+    return BalitaService(db).search_balita(nik=nik, nama=nama)
+
 
 @router.get("/", response_model=List[BalitaWithPosyandu])
 def get_all_balita_endpoint(

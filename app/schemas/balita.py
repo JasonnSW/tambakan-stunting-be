@@ -75,7 +75,9 @@ class BalitaSearchResponse(BaseModel):
     nik: str
     nama_orang_tua: str
     tanggal_lahir: datetime
+    usia_bulan: int
     jenis_kelamin: str
+    total_pemeriksaan: int
     status_terkini: Optional[StatusTerkini]
     riwayat_pemeriksaan: List[RiwayatPemeriksaan]
 
